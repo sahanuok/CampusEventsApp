@@ -1,56 +1,79 @@
-# Welcome to your Expo app 👋
+# Kelani Campus Events (CampusEventsApp)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+- **Student Name:** Y.G.S.S. Pahansith
+- **Student ID:** PS/2022/033
+- **Course:** COSC 32152 / COST 32152 / BECS 3227 – Mobile Application Development (Assignment 01)
+- **Department:** Department of Statistics & Computer Science, University of Kelaniya
 
-## Get started
+---
 
-1. Install dependencies
+## Demonstration Video
 
-   ```bash
-   npm install
-   ```
+Watch the full application walkthrough demonstrating realistic data, tab & nested stack navigation, shared state, `AppState` background/foreground detection, and local notifications:
 
-2. Start the app
+- **YouTube Demo Link:** [Watch CampusEventsApp Demo](https://youtu.be/dyPf6h1D44g?si=BlMSlSvl84ThVftH)
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 1. Application Overview & Problem Solved
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**Kelani Campus Events** is a multi-screen React Native mobile application built with JavaScript and Expo Router.
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+**Problem Solved:** University students frequently miss out on hackathons, workshops, cultural shows, sports tournaments, and academic symposia because announcements are scattered across notice boards and messaging groups. This application centralizes upcoming campus events in one clean interface where students can filter events by category, inspect full venue/organizer details, bookmark events of interest, and receive immediate local notification reminders.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 2. Screens & Their Purpose
 
-```bash
-npm run reset-project
+The application consists of **3 primary screens** organized under a Tab and Nested Stack navigation architecture:
+
+1. **Events Feed Screen (`src/app/(tabs)/(home)/index.js`)**
+   - Displays all upcoming campus events in a scrollable list using realistic, hard-coded data (`src/data/events.js`).
+   - Provides a category filter modal (`All`, `Tech`, `Cultural`, `Sports`, `Academic`).
+   - Displays a live `AppState` status banner at the top that detects when the user returns to the app from the background and records the refresh timestamp and resume count.
+2. **Event Details Screen (`src/app/(tabs)/(home)/[id].js`)**
+   - Accessible by tapping any event card via nested stack navigation using dynamic route parameters (`[id]`).
+   - Displays the banner image, category, date, time, venue, organizer, and full description.
+   - Allows the user to **Bookmark / Remove Bookmark** (updating global shared state and firing a local notification), trigger a direct **Reminder Notification**, or navigate back to the Events feed.
+3. **Bookmarks Screen (`src/app/(tabs)/bookmarks.js`)**
+   - Displays all events bookmarked by the user, synchronized in real time via shared state.
+   - Shows a dynamic numeric badge on the bottom Bookmarks tab icon reflecting the total saved count.
+   - Includes a **Remove** action backed by a confirmation `Modal` to prevent accidental removals, as well as a clean empty-state view when no events are saved.
+
+---
+
+## 3. Core React Native Components Implemented
+
+| Component        | Where It Is Implemented                             | Purpose                                                                                                          |
+| :--------------- | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| **`View`**       | All screens (`index.js`, `[id].js`, `bookmarks.js`) | Structural layout containers, cards, status banners, and modal overlays                                          |
+| **`Text`**       | All screens (`index.js`, `[id].js`, `bookmarks.js`) | Headings, category badges, dates, venues, descriptions, and status messages                                      |
+| **`Image`**      | `index.js`, `[id].js`, `bookmarks.js`               | Event card headers, full-width detail banners, and bookmark thumbnails                                           |
+| **`Pressable`**  | `index.js`, `[id].js`, `bookmarks.js`               | Interactive event cards, filter triggers, modal options, bookmark/reminder buttons, and explicit back navigation |
+| **`FlatList`**   | `index.js`, `bookmarks.js`                          | Efficiently renders the hard-coded list of campus events and bookmarked items                                    |
+| **`Modal`**      | `index.js` & `bookmarks.js`                         | Category filter selection dialog in `index.js`, and bookmark removal confirmation dialog in `bookmarks.js`       |
+| **`ScrollView`** | `[id].js`                                           | Smooth vertical scrolling for full event details                                                                 |
+| **`AppState`**   | `index.js`                                          | Native device API listener detecting `background`/`inactive` to `active` transitions                             |
+
+---
+
+## 4. Expo Router Structure (`src/app/`)
+
+The app uses Expo Router file-based routing with a root stack wrapping a bottom tab navigator (`(tabs)`) and a nested stack navigator (`(home)`):
+
+```text
+src/
+├── data/
+│   └── events.js                 # Hard-coded realistic campus event records
+├── context/
+│   └── EventsContext.js          # Shared state (useState + Context) & expo-notifications logic
+└── app/
+    ├── _layout.js                # Root layout wrapping the app in EventsProvider
+    └── (tabs)/
+        ├── _layout.js            # Bottom Tab Navigator (Events & Bookmarks with badge)
+        ├── bookmarks.js          # Bookmarks tab screen + removal confirmation Modal
+        └── (home)/
+            ├── _layout.js        # Nested Stack Navigator for Events -> Details flow
+            ├── index.js          # Main Events feed (FlatList, Filter Modal, AppState)
+            └── [id].js           # Dynamic Event Details screen with back navigation
 ```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
